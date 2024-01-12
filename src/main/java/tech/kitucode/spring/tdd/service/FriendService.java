@@ -7,6 +7,7 @@ import tech.kitucode.spring.tdd.domain.Friend;
 import tech.kitucode.spring.tdd.repository.FriendRepository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class FriendService {
@@ -23,10 +24,10 @@ public class FriendService {
         return friendRepository.save(friend);
     }
 
-    public Friend findOne(Long id) {
+    public Optional<Friend> findOne(Long id) {
         log.debug("Request to find friend with id : {}", id);
 
-        return friendRepository.findById(id).orElse(null);
+        return friendRepository.findById(id);
     }
 
     public List<Friend> findAll() {

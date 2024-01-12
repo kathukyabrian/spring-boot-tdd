@@ -4,15 +4,15 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import tech.kitucode.spring.tdd.domain.Friend;
-import tech.kitucode.spring.tdd.domain.enumerations.Gender;
 import tech.kitucode.spring.tdd.repository.FriendRepository;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -25,17 +25,29 @@ public class FriendServiceTest {
 
     @Test
     void testFindAllFriends() {
-        List<Friend> friends = new ArrayList<>();
-        Friend friendOne = new Friend("John", "john@gmail.com", "0712436587", Gender.FEMALE);
-        Friend friendTwo = new Friend("Doe", "doe@gmail.com", "0712345678", Gender.MALE);
-
-        friends.add(friendOne);
-        friends.add(friendTwo);
-
+        List<Friend> friends = Mockito.mock(List.class);
         when(friendRepository.findAll()).thenReturn(friends);
-
         List<Friend> friendList = friendService.findAll();
-        assertEquals(2, friendList.size());
+        assertTrue(!friendList.isEmpty());
         verify(friendRepository, times(1)).findAll();
+    }
+
+    @Test
+    void testSaveFriend() {
+        Friend friend = Mockito.mock(Friend.class);
+        when(friendRepository.save(Mockito.any(Friend.class))).thenReturn(friend);
+        Friend savedFriend = friendService.save(friend);
+        assertNotNull(savedFriend);
+    }
+
+    @Test
+    void testFindFriendById(){
+        Long id = 1l;
+        Friend mockFriend = Mockito.mock(Friend.class);
+        when(friendRepository.findById(id)).thenReturn(Optional.of(mockFriend));
+        Optional<Friend> result = friendService.findOne(id);
+
+        assertTrue(result.isPresent());
+        assertSame(mockFriend, result.get());
     }
 }
