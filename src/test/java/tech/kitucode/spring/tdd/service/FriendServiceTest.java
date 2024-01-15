@@ -28,7 +28,7 @@ public class FriendServiceTest {
         List<Friend> friends = Mockito.mock(List.class);
         when(friendRepository.findAll()).thenReturn(friends);
         List<Friend> friendList = friendService.findAll();
-        assertTrue(!friendList.isEmpty());
+        assertFalse(friendList.isEmpty());
         verify(friendRepository, times(1)).findAll();
     }
 
@@ -42,12 +42,21 @@ public class FriendServiceTest {
 
     @Test
     void testFindFriendById(){
-        Long id = 1l;
+        Long id = 1L;
         Friend mockFriend = Mockito.mock(Friend.class);
         when(friendRepository.findById(id)).thenReturn(Optional.of(mockFriend));
         Optional<Friend> result = friendService.findOne(id);
 
         assertTrue(result.isPresent());
         assertSame(mockFriend, result.get());
+    }
+
+    @Test
+    void testFriendDoesNotExist(){
+        Long id = 2L;
+        when(friendRepository.findById(id)).thenReturn(Optional.empty());
+        Optional<Friend> result = friendService.findOne(id);
+
+        assertFalse(result.isPresent());
     }
 }
